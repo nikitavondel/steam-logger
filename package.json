@@ -1,0 +1,30 @@
+{
+  "name": "steam-logger",
+  "version": "1.0.0",
+  "description": "Logs and organises all your incoming and outgoing Steam messages.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nikitavondel/steam-logger.git"
+  },
+  "keywords": [
+    "steam",
+    "log",
+    "messages"
+  ],
+  "author": "nikitavondel <nikitaab98@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nikitavondel/steam-logger/issues"
+  },
+  "homepage": "https://github.com/nikitavondel/steam-logger#readme",
+  "dependencies": {
+    "steam-user": "~3.3.4",
+    "mkdirp": "~0.5.1",
+    "steamid": "~0.3.1",
+    "readline-sync ": "~1.4.1"
+  }
+}
