@@ -24,10 +24,6 @@ $ node index.js
 
 It will then prompt you with your Steam username, Steam password and ocasionally your current Steam guard code.
 
-Note: If it gives the error "Error: Cannot find module 'readline-sync'" just run the additional command:
-```sh
-$ npm install readline-sync
-```
 
 ### Explanation
 
