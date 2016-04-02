@@ -30,7 +30,7 @@ steamClient.logOn({
 steamClient.on('loggedOn', function () {
 
     console.log("Logged into Steam!");
-    steamClient.setPersona(1);
+    steamClient.setPersona(3);
     checkHistory();
     setInterval(checkHistory, 30000);
 
