@@ -2,7 +2,7 @@
 [![Dependency Status](https://david-dm.org/nikitavondel/steam-logger.svg)](https://david-dm.org/nikitavondel/steam-logger)
 ### version
 
-1.0.0
+1.0.1
 
 [steam-logger] is a [Node.js] application which allows for efficient and easy logging of your incoming and outgoing [Steam] messages.
 
