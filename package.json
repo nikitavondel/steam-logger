@@ -22,9 +22,10 @@
   },
   "homepage": "https://github.com/nikitavondel/steam-logger#readme",
   "dependencies": {
-    "steam-user": "~3.3.4",
+    "log-js": "^1.4.1",
     "mkdirp": "~0.5.1",
-    "steamid": "~1.0.0",
-    "readline-sync ": "~1.4.1"
+    "readline-sync ": "~1.4.1",
+    "steam-user": "~3.3.4",
+    "steamid": "~1.0.0"
   }
 }

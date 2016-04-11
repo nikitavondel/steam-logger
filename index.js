@@ -2,6 +2,7 @@ var SteamUser = require('steam-user'),
     mkdirp = require('mkdirp'),
     fs = require('fs'),
     readlineSync = require('readline-sync'),
+    logger = require('log-js')('index.js'),
     SteamID = require('steamid');
 
 if (!fs.existsSync("data")) {
@@ -29,7 +30,7 @@ steamClient.logOn({
 
 steamClient.on('loggedOn', function () {
 
-    console.log("Logged into Steam!");
+    logger.success("Logged into Steam!");
     steamClient.setPersona(3);
     checkHistory();
     setInterval(checkHistory, 30000);
@@ -38,7 +39,7 @@ steamClient.on('loggedOn', function () {
 
 steamClient.on('error', function (err) {
 
-    console.log(err);
+    logger.error(err);
 
 });
 
@@ -56,7 +57,7 @@ steamClient.on('friendTyping', function(senderID){
     loggedUsers.users.push(steamid64);
     fs.writeFileSync("data/loggedusers.json", JSON.stringify(loggedUsers, null, 4));
 
-    console.log("Commence logging messages from: " + steamid64);
+    logger.log("Commence logging messages from: " + steamid64);
 
 });
 
@@ -64,7 +65,7 @@ steamClient.on('chatHistory', function(steamID, success, messages){
 
     if (success != SteamUser.Steam.EResult.OK) {
 
-        console.log("Error retreiving chat history: " + success);
+        logger.error("Error retreiving chat history: " + success);
         return;
 
     }
@@ -73,7 +74,7 @@ steamClient.on('chatHistory', function(steamID, success, messages){
 
     if (!fs.existsSync("data/" + steamid64)) {
 
-        console.log("Creating folder for: " + steamid64);
+        logger.log("Creating folder for: " + steamid64);
         mkdirp.sync("data/" + steamid64);
         fs.writeFileSync("data/" + steamid64 + "/main.log", "", 'utf-8');
 
@@ -134,7 +135,7 @@ steamClient.on('chatHistory', function(steamID, success, messages){
             lastStamp: currentStamp
         };
         fs.writeFileSync("data/" + steamid64 + "/info.json", JSON.stringify(writeMeA, null, 4));
-        console.log("Appended logs for: " + steamid64);
+        logger.log("Appended logs for: " + steamid64);
 
     }
 
