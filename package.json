@@ -1,6 +1,6 @@
 {
   "name": "steam-logger",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Logs and organises all your incoming and outgoing Steam messages.",
   "main": "index.js",
   "scripts": {
