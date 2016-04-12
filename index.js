@@ -2,23 +2,25 @@ var SteamUser = require('steam-user'),
     mkdirp = require('mkdirp'),
     fs = require('fs'),
     readlineSync = require('readline-sync'),
-    SteamID = require('steamid');
+    logger = require('log-js')('index.js'),
+    SteamID = require('steamid'),
+    config = require('./config.js');
 
-if (!fs.existsSync("data")) {
-    mkdirp.sync("data");
+if (!fs.existsSync(config.storageFile)) {
+    mkdirp.sync(config.storageFile);
     var writeMe = {
         users: []
     };
-    fs.writeFileSync("data/loggedusers.json", JSON.stringify(writeMe, null, 4));
+    fs.writeFileSync(config.storageFile + "/loggedusers.json", JSON.stringify(writeMe, null, 4));
 }
 
 
-var loggedUsers = JSON.parse(fs.readFileSync("data/loggedusers.json"));
+var loggedUsers = JSON.parse(fs.readFileSync(config.storageFile + "/loggedusers.json"));
 
 var steamClient = new SteamUser();
 
-var username = readlineSync.question('Enter Steam username: ');
-var password = readlineSync.question('Enter Steam password: ', {
+var username = config.SteamName || readlineSync.question('Enter Steam username: ');
+var password = config.SteamPass || readlineSync.question('Enter Steam password: ', {
     hideEchoBack: true
 });
 
@@ -29,16 +31,16 @@ steamClient.logOn({
 
 steamClient.on('loggedOn', function () {
 
-    console.log("Logged into Steam!");
+    logger.success("Logged into Steam!");
     steamClient.setPersona(3);
     checkHistory();
-    setInterval(checkHistory, 30000);
+    setInterval(checkHistory, config.reloadInterval);
 
 });
 
 steamClient.on('error', function (err) {
 
-    console.log(err);
+    logger.error(err);
 
 });
 
@@ -54,9 +56,9 @@ steamClient.on('friendTyping', function(senderID){
     }
 
     loggedUsers.users.push(steamid64);
-    fs.writeFileSync("data/loggedusers.json", JSON.stringify(loggedUsers, null, 4));
+    fs.writeFileSync(config.storageFile + "/loggedusers.json", JSON.stringify(loggedUsers, null, 4));
 
-    console.log("Commence logging messages from: " + steamid64);
+    logger.log("Commence logging messages from: " + steamid64);
 
 });
 
@@ -64,29 +66,29 @@ steamClient.on('chatHistory', function(steamID, success, messages){
 
     if (success != SteamUser.Steam.EResult.OK) {
 
-        console.log("Error retreiving chat history: " + success);
+        logger.error("Error retreiving chat history: " + success);
         return;
 
     }
 
     var steamid64 = steamID.getSteamID64();
 
-    if (!fs.existsSync("data/" + steamid64)) {
+    if (!fs.existsSync(config.storageFile + "/" + steamid64)) {
 
-        console.log("Creating folder for: " + steamid64);
-        mkdirp.sync("data/" + steamid64);
-        fs.writeFileSync("data/" + steamid64 + "/main.log", "", 'utf-8');
+        logger.log("Creating folder for: " + steamid64);
+        mkdirp.sync(config.storageFile + "/" + steamid64);
+        fs.writeFileSync(config.storageFile + "/" + steamid64 + "/main.log", "", 'utf-8');
 
         var writeMeI = {
             lastStamp: 0
         };
 
-        fs.writeFileSync("data/" + steamid64 + "/info.json", JSON.stringify(writeMeI, null, 4));
+        fs.writeFileSync(config.storageFile + "/" + steamid64 + "/info.json", JSON.stringify(writeMeI, null, 4));
 
     }
 
     var writeMe = "";
-    var infoJ = JSON.parse(fs.readFileSync("data/" + steamid64 + "/info.json"));
+    var infoJ = JSON.parse(fs.readFileSync(config.storageFile + "/" + steamid64 + "/info.json"));
     var lastStamp = infoJ.lastStamp;
     var newMessages = false;
 
@@ -115,10 +117,10 @@ steamClient.on('chatHistory', function(steamID, success, messages){
         if (messages[i].steamID.accountid == steamClient.steamID.accountid) {
             // It is us.
 
-            personaPrefix = "Me: ";
+            personaPrefix = config.yourPrefix;
         } else {
 
-            personaPrefix = "Them: ";
+            personaPrefix = config.theirPrefix;
 
         }
 
@@ -128,13 +130,13 @@ steamClient.on('chatHistory', function(steamID, success, messages){
 
     if (newMessages) {
 
-        fs.appendFileSync("data/" + steamid64 + "/main.log", writeMe);
+        fs.appendFileSync(config.storageFile + "/" + steamid64 + "/main.log", writeMe);
 
         var writeMeA = {
             lastStamp: currentStamp
         };
-        fs.writeFileSync("data/" + steamid64 + "/info.json", JSON.stringify(writeMeA, null, 4));
-        console.log("Appended logs for: " + steamid64);
+        fs.writeFileSync(config.storageFile + "/" + steamid64 + "/info.json", JSON.stringify(writeMeA, null, 4));
+        logger.log("Appended logs for: " + steamid64);
 
     }
 
